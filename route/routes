@@ -1,0 +1,16 @@
+var express = require ('express');
+
+var playerController = require ('../src/player/playerController');
+const router = express.Router();
+
+// router.route('./player/login').post(playerController.loginPlayerControllerFn);
+router.route('./player/create').post(playerController.createPlayerControllerFn);
+router.post("/test", (req, res) => {
+    console.log(req);
+    res.send("Post received");
+    post(playerController.createPlayerControllerFn);
+
+})
+
+
+module.exports = router;

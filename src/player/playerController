@@ -1,0 +1,23 @@
+var playerService = require('./playerService');
+
+var createPlayerControllerFn = async(req, res) => {
+
+    try {
+        console.log(req.body);
+        var status = await playerService.createPlayerDBService(req.body);
+        console.log(status);
+        
+        if(status) {
+            res.send({"status": true, "message": "Player created successfully"});
+        }
+        else {
+            res.send({"status": false, "message": "Error in creating player"});
+        }
+
+    }
+    catch(err) {
+        console.log(err);
+    }
+}
+
+module.exports = { createPlayerControllerFn };
