@@ -7,16 +7,6 @@ app.use(express.json())
 const Schema = mongoose.Schema;
 
 
-const playerModel = new Schema({
-
-    userName: String,
-    steamID: String,
-    Password: String
-
-
-
-});
-
 
 let db
 
@@ -33,6 +23,17 @@ connectToDb((err) => {
     }
     
 })
+const playerModel = new Schema({
+
+    userName: String,
+    steamID: String,
+    Password: String
+
+
+
+});
+module.exports = mongoose.model('signUpData', playerModel)
+
 
 
 
