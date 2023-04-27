@@ -5,7 +5,14 @@ const mongoose = require("mongoose");
 const app = express()
 app.use(express.json())
 const Schema = mongoose.Schema;
+const cors = require ('cors');
 
+
+app.use(cors({
+    origin: 'http://localhost:4200',
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type']
+}));
 
 
 let db
@@ -116,6 +123,22 @@ app.post('/users', (req,res)=>{
     const user = req.body
 
     db.collection('users')
+        .insertOne(user)
+        .then(result => {
+            res.status(201).json(result)
+        })
+        .catch(err => {
+            res.status(500).json({err: "Could not add user"})
+        })
+
+
+})
+
+app.post('/register', (req,res)=>{
+    //user object
+    const user = req.body
+
+    db.collection('signUpData')
         .insertOne(user)
         .then(result => {
             res.status(201).json(result)
