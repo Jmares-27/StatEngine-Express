@@ -1,9 +1,22 @@
 const express = require('express')
 const { ObjectId} = require('mongodb')
 const { connectToDb,getDb} = require('./db')
-
+const mongoose = require("mongoose");
 const app = express()
 app.use(express.json())
+const Schema = mongoose.Schema;
+
+
+const playerModel = new Schema({
+
+    userName: String,
+    steamID: String,
+    Password: String
+
+
+
+});
+
 
 let db
 
@@ -42,6 +55,22 @@ app.get('/users', (req,res) => {
 
 })
 
+app.get ('/users/:userName', (req,res)=> {
+
+        db.collection('users')
+            .findOne({userName: (req.params.userName)})
+            .then(doc => {
+                return res.status(200).json(doc)
+            })
+            .catch(()=> {
+                return res.status(500).json({error: "could not find user"})
+            })
+
+    
+
+
+})
+//allow cross origin request
 app.get ('/users/:id', (req,res)=> {
     //req.params.id
 
