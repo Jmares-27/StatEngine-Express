@@ -30,6 +30,8 @@ connectToDb((err) => {
     }
     
 })
+
+/*
 const playerModel = new Schema({
 
     userName: String,
@@ -40,11 +42,13 @@ const playerModel = new Schema({
 
 });
 module.exports = mongoose.model('signUpData', playerModel)
-
+*/
 
 
 
 //routes
+
+
 
 app.get('/users', (req,res) => {
 
@@ -61,6 +65,15 @@ app.get('/users', (req,res) => {
             return res.status(500).json({error: "could not find user"})
         })
 
+})
+
+
+
+
+app.get ('/search', (req,res)=> {
+    res.send(req.query)
+
+    
 })
 
 app.get ('/users/:userName', (req,res)=> {
