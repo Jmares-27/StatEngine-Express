@@ -31,7 +31,6 @@ connectToDb((err) => {
     
 })
 
-<<<<<<< HEAD
 //creates a user
 app.post('/api/createuser',(req,res)=>{
     data = req.body;
@@ -68,9 +67,7 @@ async function loginSearch(data){
     return search_result[0];
 }
 /*
-=======
 
->>>>>>> 79cb4780e9db93d818bf6e7471ba8e05037e04b9
 const playerModel = new Schema({
 
     userName: String,
