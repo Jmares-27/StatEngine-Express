@@ -9,7 +9,7 @@ const cors = require ('cors');
 
 
 app.use(cors({
-    origin: 'http://localhost:4200',
+    origin: '*',
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type']
 }));
@@ -31,6 +31,41 @@ connectToDb((err) => {
     
 })
 
+//creates a user
+app.post('/api/createuser',(req,res)=>{
+    data = req.body;
+    console.log("Username: ",data.username);
+    console.log("Password: ",data.password);
+    console.log("Email:",data.email);
+    //password encryption goes here
+    database = db.collection("users");
+    database.insertOne(req.body);
+    res.send();
+})
+
+
+
+//calls loginsearch and returns an object that it has found if it found something
+app.put('/api/login', async (req,res)=>{
+    // console.log("REQUEST:",req);
+    search_result = await loginSearch(req.body);
+    if (search_result===undefined) return await res.send(["Not found"]).status(404);
+    else return await res.send(search_result).status(200);
+})
+
+//searches the database for entries with the same username/password combination
+async function loginSearch(data){
+    searchdb = db.collection("users");
+    query = {
+        username:data.username,
+        password:data.password
+    }
+    console.log(data)
+    search_result = await searchdb.find(query).toArray();
+    console.log(search_result[0]);
+
+    return search_result[0];
+}
 /*
 const playerModel = new Schema({
 
