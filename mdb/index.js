@@ -21,9 +21,9 @@ let db
 connectToDb((err) => {
     if(!err)
     {
-        app.listen(3005, () =>
+        app.listen(3026, () =>
         {
-            console.log("app listening on port 3005")
+            console.log("app listening on port 3026")
         })
 
         db=getDb()
@@ -31,6 +31,7 @@ connectToDb((err) => {
     
 })
 
+<<<<<<< HEAD
 //creates a user
 app.post('/api/createuser',(req,res)=>{
     data = req.body;
@@ -67,6 +68,9 @@ async function loginSearch(data){
     return search_result[0];
 }
 /*
+=======
+
+>>>>>>> 79cb4780e9db93d818bf6e7471ba8e05037e04b9
 const playerModel = new Schema({
 
     userName: String,
@@ -77,7 +81,7 @@ const playerModel = new Schema({
 
 });
 module.exports = mongoose.model('signUpData', playerModel)
-*/
+
 
 
 
@@ -104,7 +108,6 @@ app.get('/users', (req,res) => {
 
 
 
-
 app.get ('/search', (req,res)=> {
     res.send(req.query)
 
@@ -127,6 +130,7 @@ app.get ('/users/:userName', (req,res)=> {
 
 })
 //allow cross origin request
+
 app.get ('/users/:id', (req,res)=> {
     //req.params.id
 
@@ -198,6 +202,7 @@ app.post('/register', (req,res)=>{
 
 })
 
+/*
 app.delete('/users/:id',  (req,res)=>{
 
     if(ObjectId.isValid(req.params.id)){
@@ -216,6 +221,23 @@ app.delete('/users/:id',  (req,res)=>{
     }
 
 })
+*/
+
+app.delete('/search', (req,res)=> {
+    
+    db.collection('users')
+        .deleteOne({userName: req.query.userName})
+        .then(result => {
+            res.status(201).json(result)
+        })
+        .catch(err => {
+            res.status(500).json({err: "Could not delete user"})
+        })
+   
+    console.log(req.query)
+
+})
+
 
 app.patch('/users/:id',  (req,res)=>{
     const updates = req.body
