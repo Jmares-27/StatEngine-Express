@@ -110,7 +110,7 @@ module.exports = mongoose.model('signUpData', playerModel)
 
 //routes
 
-
+*/
 
 app.get('/users', (req,res) => {
 
@@ -136,6 +136,8 @@ app.get ('/search', (req,res)=> {
 
     
 })
+
+/*
 
 app.get ('/users/:userName', (req,res)=> {
 
@@ -246,7 +248,7 @@ app.delete('/users/:id',  (req,res)=>{
 })
 */
 
-app.delete('/search', (req,res)=> {
+app.delete('/api/deleteAccount/:username', (req,res)=> {
     
     db.collection('users')
         .deleteOne({userName: req.query.userName})
