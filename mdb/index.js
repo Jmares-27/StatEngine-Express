@@ -6,7 +6,9 @@ const app = express()
 app.use(express.json())
 const Schema = mongoose.Schema;
 const cors = require ('cors');
-
+const jwt = require('jsonwebtoken');
+const fs = require('fs');
+// import * as jwt from jsonwebtoken;
 
 app.use(cors({
     origin: '*',
@@ -43,14 +45,30 @@ app.post('/api/createuser',(req,res)=>{
     res.send();
 })
 
-
+const RSA_PRIVATE_KEY = fs.readFileSync('./private.key');
 
 //calls loginsearch and returns an object that it has found if it found something
-app.put('/api/login', async (req,res)=>{
+app.post('/api/login', async (req,res)=>{
     // console.log("REQUEST:",req);
     search_result = await loginSearch(req.body);
-    if (search_result===undefined) return await res.send(["Not found"]).status(404);
-    else return await res.send(search_result).status(200);
+    if (search_result===undefined) { //if an account is not found with matching credentials
+        return await res.send(["Not found"]).status(404);
+    } else { //an account is found with matching credentials
+        console.log("ACCOUNT FOUND!")
+        const jwtBearerToken = await jwt.sign({}, RSA_PRIVATE_KEY, {
+            algorithm:'RS256',
+            expiresIn: 120, 
+            subject: search_result._id.toString()
+        })
+        // await res.cookie("SESSIONID", jwtBearerToken, {httpOnly:true, secure:true});
+        return res.status(200).send({token: jwtBearerToken});
+    }
+    
+    
+    
+    
+    // return await res.send(["Not found"]).status(404);
+    // else return await res.send(search_result).status(200);
 })
 
 //searches the database for entries with the same username/password combination
