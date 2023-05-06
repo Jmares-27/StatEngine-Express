@@ -53,11 +53,13 @@ app.get('/api/searchuser/:username',(req,res)=>{
     db.collection('users').findOne({ username: username })
       .then((user) => {
         if (!user) {
-        //   return res.status(400).json('User not found')
-          return res.json();
-        //   return res.json({ message: 'User not found' });
+            //if no user exist in the database, return nothing back to the frontend
+            return res.json();
+
+        }else {
+            //if user exist, return the user data back to the front end
+            return res.status(200).json(user);
         }
-        return res.status(200).json(user);
       })
       .catch((err) => {
         console.log(err);
@@ -250,16 +252,26 @@ app.delete('/users/:id',  (req,res)=>{
 
 app.delete('/api/deleteAccount/:username', (req,res)=> {
     
-    db.collection('users')
-        .deleteOne({userName: req.query.userName})
-        .then(result => {
-            res.status(201).json(result)
-        })
-        .catch(err => {
-            res.status(500).json({err: "Could not delete user"})
-        })
-   
-    console.log(req.query)
+    const username = req.params.username;
+
+    db.collection('users').findOne({ username: username })
+      .then((user) => {
+        if (!user) {
+             
+          //if there is no such user exist in the database return nothing back to the frontend
+          return res.json();
+        }
+        else{
+          //if found the user exist in the database, delete that user and send message back to frontend
+            db.collection('users').deleteOne({ username: username })
+            return res.status(200).json({message: "Delete Successfully!"});
+        }
+        
+      })
+      .catch((err) => {
+        console.log(err);
+        return res.status(500).json({ message: err.message });
+      });
 
 })
 
