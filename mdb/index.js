@@ -40,9 +40,33 @@ app.post('/api/createuser',(req,res)=>{
     //password encryption goes here
     database = db.collection("users");
     database.insertOne(req.body);
-    res.send();
+    res.send("success!");
 })
 
+
+
+
+app.get('/api/searchuser/:username',(req,res)=>{
+
+    const username = req.params.username;
+
+    db.collection('users').findOne({ username: username })
+      .then((user) => {
+        if (!user) {
+        //   return res.status(400).json('User not found')
+          return res.json();
+        //   return res.json({ message: 'User not found' });
+        }
+        return res.status(200).json(user);
+      })
+      .catch((err) => {
+        console.log(err);
+        return res.status(500).json({ message: err.message });
+      });
+
+
+        
+})
 
 
 //calls loginsearch and returns an object that it has found if it found something
@@ -66,6 +90,8 @@ async function loginSearch(data){
 
     return search_result[0];
 }
+
+
 /*
 
 const playerModel = new Schema({
