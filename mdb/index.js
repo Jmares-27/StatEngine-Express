@@ -8,6 +8,8 @@ const Schema = mongoose.Schema;
 const cors = require ('cors');
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
+const cookieParser = require('cookie-parser');
+app.use(cookieParser())
 // import * as jwt from jsonwebtoken;
 
 app.use(cors({
@@ -60,8 +62,10 @@ app.post('/api/login', async (req,res)=>{
             expiresIn: 120, 
             subject: search_result._id.toString()
         })
-        // await res.cookie("SESSIONID", jwtBearerToken, {httpOnly:true, secure:true});
-        return res.status(200).send({token: jwtBearerToken});
+        console.log("Sending Cookie!");
+        res.cookie("SESSIONID",jwtBearerToken,{httpOnly:true, secure:true})
+        return await res.send(["Cookie set"]).status(200);
+
     }
     
     
