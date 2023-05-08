@@ -72,7 +72,6 @@ function checkIfAuthenticated(token){
 // api to call when trying to authenticate user.
 app.get('/api/authenticate', (req,res)=>{
     authHeader = req.headers.authorization;
-    console.log("AUTH-HEADER: ",authHeader);
     token = authHeader && authHeader.split(' ')[1];
     console.log(token);
     if (checkIfAuthenticated(token)){
