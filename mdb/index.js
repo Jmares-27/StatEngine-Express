@@ -38,14 +38,40 @@ connectToDb((err) => {
 
 //creates a user
 app.post('/api/createuser',(req,res)=>{
-    data = req.body;
-    console.log("Username: ",data.username);
-    console.log("Password: ",data.password);
-    console.log("Email:",data.email);
-    //password encryption goes here
+    // data = req.body;
+    const {username, password, email} = req.body
+    console.log("Username: ",username);
+    console.log("Password: ",password);
+    console.log("Email:",email);
     database = db.collection("users");
-    database.insertOne(req.body);
-    res.send("success!");
+
+
+        // const userExist = database.findOne({ $or: [{ username }, { email }] });
+        // console.log (userExist)
+        // res.json(userExist)
+
+
+
+
+        db.collection('users').findOne({ $or: [{ username }, { email }] })
+        .then((user) => {
+          if (!user) {
+              //if no user exist in the database, return nothing back to the frontend
+              database.insertOne(req.body);  
+              return res.json("Sign Up Success!")
+  
+          }else if (user.username) {
+              //if user exist, return the user data back to the front end
+              return res.json("Username or email already exist!")
+          }
+
+        })
+        .catch((err) => {
+          console.log(err);
+          return res.status(500).json({ message: err.message });
+        });
+        
+
 })
 
 const RSA_PRIVATE_KEY = fs.readFileSync('./private.key');
@@ -89,7 +115,7 @@ app.get('/api/searchuser/:username',(req,res)=>{
       .then((user) => {
         if (!user) {
             //if no user exist in the database, return nothing back to the frontend
-            return res.json();
+            return res.json("No user exist!");
 
         }else {
             //if user exist, return the user data back to the front end
