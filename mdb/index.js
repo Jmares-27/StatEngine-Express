@@ -48,6 +48,17 @@ app.post('/api/createuser',(req,res)=>{
     res.send("success!");
 })
 
+//Resets password of user: TODO create email functionality
+app.post('/api/resetpassword',(req,res)=>{
+    data = req.body;
+    console.log("Username: ", data.username);
+    console.log("Password: ",data.password);
+    //TODO encrypt password
+    db.collection("users").updateOne({username: data.username}, {"$set": {password: data.password}});
+    console.log("User :" + data.username + " has had their password updated");
+    res.send("Password successfully modified");
+})
+
 const RSA_PRIVATE_KEY = fs.readFileSync('./private.key');
 const RSA_PUBLIC_KEY = fs.readFileSync('./public.key');
 
