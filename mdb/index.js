@@ -52,22 +52,25 @@ const RSA_PRIVATE_KEY = fs.readFileSync('./private.key');
 const RSA_PUBLIC_KEY = fs.readFileSync('./public.key');
 
 function checkIfAuthenticated(token){
-    const decodeToken = jwt.verify(token, RSA_PUBLIC_KEY, {algorithms:['RS256']});
-    const expiration = decodeToken.exp;
-    console.log(decodeToken);
-    if (expiration<Date.now/1000){
-        console.log("Token is expired");
-        return false
-    } else {
+    try{
+        const decodeToken = jwt.verify(token, RSA_PUBLIC_KEY, {algorithms:['RS256']});
+        const expiration = decodeToken.exp;
+        console.log(decodeToken);
         return true
+    } catch (err){
+        if (err.name=="TokenExpiredError"){
+            console.error("token expired")
+            return false
+        } else {
+            console.error("Error verifying token: ",err)
+            return false
+        }
     }
+    
 }
 
 // api to call when trying to authenticate user.
 app.get('/api/authenticate', (req,res)=>{
-    console.log("---------");
-    console.log("req:",req.headers.authorization);
-    console.log("----------");
     authHeader = req.headers.authorization;
     console.log("AUTH-HEADER: ",authHeader);
     token = authHeader && authHeader.split(' ')[1];
