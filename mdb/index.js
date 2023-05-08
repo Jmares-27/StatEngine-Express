@@ -9,13 +9,14 @@ const cors = require ('cors');
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
 const cookieParser = require('cookie-parser');
+const { decode } = require('punycode');
 app.use(cookieParser())
 // import * as jwt from jsonwebtoken;
 
 app.use(cors({
     origin: '*',
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    allowedHeaders: ['Content-Type']
+    allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
 
@@ -48,7 +49,37 @@ app.post('/api/createuser',(req,res)=>{
 })
 
 const RSA_PRIVATE_KEY = fs.readFileSync('./private.key');
+const RSA_PUBLIC_KEY = fs.readFileSync('./public.key');
 
+function checkIfAuthenticated(token){
+    const decodeToken = jwt.verify(token, RSA_PUBLIC_KEY, {algorithms:['RS256']});
+    const expiration = decodeToken.exp;
+    console.log(decodeToken);
+    if (expiration<Date.now/1000){
+        console.log("Token is expired");
+        return false
+    } else {
+        return true
+    }
+}
+
+// api to call when trying to authenticate user.
+app.get('/api/authenticate', (req,res)=>{
+    console.log("---------");
+    console.log("req:",req.headers.authorization);
+    console.log("----------");
+    authHeader = req.headers.authorization;
+    console.log("AUTH-HEADER: ",authHeader);
+    token = authHeader && authHeader.split(' ')[1];
+    console.log(token);
+    if (checkIfAuthenticated(token)){
+        console.log("Authentication success!")
+        res.send({value: true}).status(200);
+    } else {
+        console.log("Authentication failed!")
+        res.send({value: false}).status(500);
+    }
+})
 
 app.get('/api/searchuser/:username',(req,res)=>{
 
@@ -88,15 +119,9 @@ app.post('/api/login', async (req,res)=>{
             expiresIn: 120, 
             subject: search_result._id.toString()
         })
-        console.log("Sending Cookie!");
-        res.cookie("SESSIONID",jwtBearerToken,{httpOnly:true, secure:true})
-        return await res.send(["Cookie set"]).status(200);
+        return await res.send({token: jwtBearerToken});
 
     }
-    
-    
-    
-    
     // return await res.send(["Not found"]).status(404);
     // else return await res.send(search_result).status(200);
 })
