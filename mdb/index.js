@@ -335,7 +335,7 @@ app.delete('/api/deleteAccount/:username', (req,res)=> {
 
 })
 
-app.patch('/api/updatePassword/:username&:password', (req,res)=> {
+app.patch('/api/updatePassword/:username/:password', (req,res)=> {
 
     const un = req.params.username;
     const newPass = req.params.password;
@@ -349,9 +349,9 @@ app.patch('/api/updatePassword/:username&:password', (req,res)=> {
         }
         else{
           //if found the user exist in the database, delete that user and send message back to frontend
-            db.collection('users').updateOne({ password: newPass })
+            db.collection('users').updateOne({username: un}, {"$set": {password: newPass}});
             res.send(user)
-            return res.status(200).json({message: "password updated Successfully!"});
+            
         }
         
       })
