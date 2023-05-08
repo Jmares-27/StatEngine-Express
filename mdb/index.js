@@ -118,7 +118,7 @@ app.post('/api/login', async (req,res)=>{
         console.log("ACCOUNT FOUND!")
         const jwtBearerToken = await jwt.sign({}, RSA_PRIVATE_KEY, {
             algorithm:'RS256',
-            expiresIn: 120, 
+            expiresIn: '2h', 
             subject: search_result._id.toString()
         })
         return await res.send({token: jwtBearerToken});
